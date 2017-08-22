@@ -4,7 +4,7 @@
     return;
   }
 
-  if (UpdateManager.currentVersion > 0.2) {
+  if (UpdateManager.currentVersion > 0.201) {
     console.log('[GameTweaker] This mod may be oudtaded.');
   }
 
