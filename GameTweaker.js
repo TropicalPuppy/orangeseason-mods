@@ -259,6 +259,16 @@
     creatureData.friendship += Math.fix(20 * GameTweakerContent.relationshipMultiplier);
   };
 
+  function additionalKeyDownListener(event) {
+    if (Utils.isOptionValid('test')) return;
+    if (!$gameTemp.isPlaytest()) return;
+
+    if (event.keyCode == 119) {
+      require('nw.gui').Window.get().showDevTools();
+    }
+  }
+  document.addEventListener('keydown', additionalKeyDownListener);
+
   GameTweakerContent.restoreDefaults = function() {
     TimeManager.secondLength = GameTweakerContent.originalSecondLength || 50;
     GameTweakerContent.priceMultiplier = 1;
