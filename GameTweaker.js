@@ -5,7 +5,7 @@
   }
 
   if (UpdateManager.currentVersion > 0.201) {
-    console.log('[GameTweaker] This mod may be oudtaded.');
+    console.log('[GameTweaker] This mod may be outdated.');
   }
 
   function GameTweakerContent() {
