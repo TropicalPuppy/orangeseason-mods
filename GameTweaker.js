@@ -4,7 +4,7 @@
     return;
   }
 
-  if (UpdateManager.currentVersion > 0.201) {
+  if (UpdateManager.currentVersion > 0.202) {
     console.log('[GameTweaker] This mod may be outdated.');
   }
 
@@ -259,15 +259,17 @@
     creatureData.friendship += Math.fix(20 * GameTweakerContent.relationshipMultiplier);
   };
 
-  function additionalKeyDownListener(event) {
-    if (Utils.isOptionValid('test')) return;
-    if (!$gameTemp.isPlaytest()) return;
+  if (UpdateManager.currentVersion <= 0.202) {
+    function additionalKeyDownListener(event) {
+      if (Utils.isOptionValid('test')) return;
+      if (!$gameTemp.isPlaytest()) return;
 
-    if (event.keyCode == 119) {
-      require('nw.gui').Window.get().showDevTools();
+      if (event.keyCode == 119) {
+        require('nw.gui').Window.get().showDevTools();
+      }
     }
+    document.addEventListener('keydown', additionalKeyDownListener);
   }
-  document.addEventListener('keydown', additionalKeyDownListener);
 
   GameTweakerContent.restoreDefaults = function() {
     TimeManager.secondLength = GameTweakerContent.originalSecondLength || 50;
