@@ -4,7 +4,7 @@
     return;
   }
 
-  if (UpdateManager.currentVersion > 0.202) {
+  if (UpdateManager.currentVersion > 0.205) {
     console.log('[GameTweaker] This mod may be outdated.');
   }
 
@@ -15,6 +15,7 @@
   ModManager.addTranslation('brazilian', 'Game Tweaker', 'Modificador de Jogo');
   ModManager.addTranslation('brazilian', 'Price Multiplier', 'Multiplicador de Preços');
   ModManager.addTranslation('brazilian', 'Relationship Multiplier', 'Multiplicador de Relacionamentos');
+  ModManager.addTranslation('brazilian', 'Fish Multiplier', 'Multiplicador de Peixes');
   ModManager.addTranslation('brazilian', 'Debug Mode', 'Modo de Testes');
 
   GameTweakerContent.priceMultiplier = 1;
@@ -36,6 +37,10 @@
 
     if (symbol == 'gametweakermod_relationshipmultiplier') {
       return Math.floor(Math.fix(GameTweakerContent.relationshipMultiplier * 100)) + '%';
+    }
+
+    if (symbol == 'gametweakermod_fishmultiplier') {
+      return Math.floor(Math.fix(FishingManager.fishChance * 100)) + '%';
     }
 
     if (symbol == 'gametweakermod_reset') {
@@ -72,6 +77,11 @@
       modWindow.addCommand(t('Time Stretch'), 'gametweakermod_timestretch');
       modWindow.addCommand(t('Price Multiplier'), 'gametweakermod_pricemultiplier');
       modWindow.addCommand(t('Relationship Multiplier'), 'gametweakermod_relationshipmultiplier');
+
+      if (UpdateManager.currentVersion >= 0.205) {
+        modWindow.addCommand(t('Fish Multiplier'), 'gametweakermod_fishmultiplier');
+      }
+
       modWindow.addCommand(t('Debug Mode'), 'gametweakermod_debugmode');
 
       modWindow.addCommand(t('Reset Defaults'), 'gametweakermod_reset');
@@ -89,6 +99,9 @@
       return true;
     }
     if (symbol == 'gametweakermod_relationshipmultiplier') {
+      return true;
+    }
+    if (symbol == 'gametweakermod_fishmultiplier') {
       return true;
     }
     if (symbol == 'gametweakermod_debugmode') {
@@ -136,6 +149,15 @@
       return true;
     }
 
+    if (symbol == 'gametweakermod_fishmultiplier') {
+      if (FishingManager.fishChance <= 0.9) {
+        FishingManager.fishChance += 0.1;
+      }
+
+      SoundManager.playCursor();
+      return true;
+    }
+
     if (symbol == 'gametweakermod_debugmode') {
       Utils._isPlaytest = !Utils._isPlaytest;
       SoundManager.playCursor();
@@ -177,6 +199,15 @@
       return true;
     }
 
+    if (symbol == 'gametweakermod_fishmultiplier') {
+      if (FishingManager.fishChance >= 0.1) {
+        FishingManager.fishChance -= 0.1;
+      }
+
+      SoundManager.playCursor();
+      return true;
+    }
+
     if (symbol == 'gametweakermod_debugmode') {
       Utils._isPlaytest = !Utils._isPlaytest;
       SoundManager.playCursor();
@@ -206,16 +237,26 @@
     config.gametweakermod_secondLength = TimeManager.secondLength;
     config.gametweakermod_pricemultiplier = GameTweakerContent.priceMultiplier;
     config.gametweakermod_relationshipmultiplier = GameTweakerContent.relationshipMultiplier;
+    config.gametweakermod_fishmultiplier = FishingManager.fishChance;
     config.gametweakermod_debugmode = Utils._isPlaytest;
   };
 
   GameTweakerContent.originalSecondLength = TimeManager.secondLength;
+  GameTweakerContent.originalFishChance = FishingManager.fishChance;
+
   if (ConfigManager.loadedConfig) {
     if (ConfigManager.loadedConfig.gametweakermod_secondLength) {
       TimeManager.secondLength = ConfigManager.loadedConfig.gametweakermod_secondLength;
       if (isNaN(TimeManager.secondLength) || TimeManager.secondLength < 1 || TimeManager.secondLength > 500) {
         TimeManager.secondLength = GameTweakerContent.originalSecondLength || 50;
       }
+    }
+
+    if (ConfigManager.loadedConfig.gametweakermod_fishmultiplier !== undefined && !isNaN(ConfigManager.loadedConfig.gametweakermod_fishmultiplier)) {
+      FishingManager.fishChance = ConfigManager.loadedConfig.gametweakermod_fishmultiplier;
+
+      if (FishingManager.fishChance < 0.1) FishingManager.fishChance = 0.1;
+      if (FishingManager.fishChance > 1) FishingManager.fishChance = 1;
     }
 
     if (ConfigManager.loadedConfig.gametweakermod_pricemultiplier) {
@@ -273,6 +314,7 @@
 
   GameTweakerContent.restoreDefaults = function() {
     TimeManager.secondLength = GameTweakerContent.originalSecondLength || 50;
+    FishingManager.fishChance = GameTweakerContent.originalFishChance || 0.2;
     GameTweakerContent.priceMultiplier = 1;
     GameTweakerContent.relationshipMultiplier = 1;
     Utils._isPlaytest = Utils.isOptionValid('test');
