@@ -4,10 +4,6 @@
     return;
   }
 
-  if (UpdateManager.currentVersion > 0.205) {
-    console.log('[GameTweaker] This mod may be outdated.');
-  }
-
   function GameTweakerContent() {
   }
 
@@ -105,7 +101,7 @@
       return true;
     }
     if (symbol == 'gametweakermod_debugmode') {
-      Utils._isPlaytest = !Utils._isPlaytest;
+      Utils._isTestMode = !Utils._isTestMode;
       SoundManager.playOk();
       return true;
     }
@@ -159,7 +155,7 @@
     }
 
     if (symbol == 'gametweakermod_debugmode') {
-      Utils._isPlaytest = !Utils._isPlaytest;
+      Utils._isTestMode = !Utils._isTestMode;
       SoundManager.playCursor();
       return true;
     }
@@ -209,7 +205,7 @@
     }
 
     if (symbol == 'gametweakermod_debugmode') {
-      Utils._isPlaytest = !Utils._isPlaytest;
+      Utils._isTestMode = !Utils._isTestMode;
       SoundManager.playCursor();
       return true;
     }
@@ -238,7 +234,7 @@
     config.gametweakermod_pricemultiplier = GameTweakerContent.priceMultiplier;
     config.gametweakermod_relationshipmultiplier = GameTweakerContent.relationshipMultiplier;
     config.gametweakermod_fishmultiplier = FishingManager.fishChance;
-    config.gametweakermod_debugmode = Utils._isPlaytest;
+    config.gametweakermod_debugmode = Utils._isTestMode;
   };
 
   GameTweakerContent.originalSecondLength = TimeManager.secondLength;
@@ -276,7 +272,7 @@
     }
 
     if (ConfigManager.loadedConfig.gametweakermod_debugmode) {
-      Utils._isPlaytest = true;
+      Utils._isTestMode = true;
     }
   }
 
@@ -300,24 +296,12 @@
     creatureData.friendship += Math.fix(20 * GameTweakerContent.relationshipMultiplier);
   };
 
-  if (UpdateManager.currentVersion <= 0.202) {
-    function additionalKeyDownListener(event) {
-      if (Utils.isOptionValid('test')) return;
-      if (!$gameTemp.isPlaytest()) return;
-
-      if (event.keyCode == 119) {
-        require('nw.gui').Window.get().showDevTools();
-      }
-    }
-    document.addEventListener('keydown', additionalKeyDownListener);
-  }
-
   GameTweakerContent.restoreDefaults = function() {
     TimeManager.secondLength = GameTweakerContent.originalSecondLength || 50;
     FishingManager.fishChance = GameTweakerContent.originalFishChance || 0.2;
     GameTweakerContent.priceMultiplier = 1;
     GameTweakerContent.relationshipMultiplier = 1;
-    Utils._isPlaytest = Utils.isOptionValid('test');
+    Utils._isTestMode = Utils.isOptionValid('test');
   };
   ContentManager.registerContentClass(GameTweakerContent);
 
