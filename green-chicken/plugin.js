@@ -1,4 +1,7 @@
 (function(pluginName){
-  ModManager.loadPluginEventFile(pluginName, 'stella.txt', 'Stella');
-  CommonEventManager.redirectEvent('stella_buy_chicken', 'stella_buy_green_chicken');
+  const addChickensToList = Managers.Shop.addChickensToList;
+  Managers.Shop.addChickensToList = function(list) {
+    addChickensToList.call(this, list);
+    list.push('green-chicken');
+  };
 })(window.pluginName);
